@@ -1,11 +1,11 @@
 # Childguard Scheduler – Django
 
-Omgezet van React/TypeScript naar Django + vanilla HTML/CSS.
+Beau Ingang en Lenn Dehert
 
 ## Projectstructuur
 
 ```
-childguard_django/
+childguard_v3/
 ├── config/                  # Django project configuratie
 │   ├── settings.py
 │   ├── urls.py
