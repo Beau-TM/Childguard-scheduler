@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Childguard Scheduler – Inloggen</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'accounts/css/login.css' %}">
+</head>
+<body>
+
+<div class="card">
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-wrap">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/>
+            </svg>
+        </div>
+        <h1>Childguard Scheduler</h1>
+        <p class="subtitle">Log in om toegang te krijgen tot het planningssysteem</p>
+    </div>
+
+    <!-- Django messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Formulier -->
+    <form method="post" action="{% url 'accounts:login' %}" novalidate>
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="id_username">Gebruikersnaam</label>
+            <div class="input-wrap">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                </svg>
+                <input
+                    type="text"
+                    id="id_username"
+                    name="username"
+                    placeholder="Voer gebruikersnaam in"
+                    value="{{ form.username.value|default_if_none:'' }}"
+                    autocomplete="username"
+                    {% if form.username.errors %}class="is-invalid"{% endif %}
+                    required
+                >
+            </div>
+            {% if form.username.errors %}
+                <small style="color:#ef4444;font-size:.8rem;">{{ form.username.errors|join:", " }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password">Wachtwoord</label>
+            <div class="input-wrap">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 1 1 6.2 0v2z"/>
+                </svg>
+                <input
+                    type="password"
+                    id="id_password"
+                    name="password"
+                    placeholder="Voer wachtwoord in"
+                    autocomplete="current-password"
+                    {% if form.non_field_errors %}class="is-invalid"{% endif %}
+                    required
+                >
+            </div>
+            {% if form.non_field_errors %}
+                <small style="color:#ef4444;font-size:.8rem;">{{ form.non_field_errors|join:", " }}</small>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-login">Inloggen</button>
+    </form>
+
+</div>
+
+
+
+</body>
+</html>

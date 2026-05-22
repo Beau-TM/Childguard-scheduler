@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Childguard Scheduler – Planning Genereren</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'directie/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'directie/css/planning.css' %}">
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<header class="navbar">
+    <div class="navbar-brand">
+        <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="white"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg>
+        </div>
+        <div class="brand-text">
+            <span class="brand-name">Childguard Scheduler</span>
+            <span class="brand-sub">Speelplaatsbewaking Planning</span>
+        </div>
+    </div>
+
+    <nav class="navbar-nav">
+        <a href="{% url 'directie:dashboard' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Dashboard</a>
+        <a href="{% url 'directie:kalender' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>Gezamenlijke Kalender</a>
+        <a href="{% url 'directie:planning_genereren' %}" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12z"/></svg>Planning Genereren</a>
+        <a href="{% url 'directie:speciale_dagen' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/></svg>Speciale Dagen</a>
+        <a href="{% url 'directie:afmeldingen' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>Afmeldingen</a>
+        <a href="{% url 'directie:leerkrachten' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Leerkrachten</a>
+        <a href="{% url 'directie:school_overzicht' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>School Overzicht</a>
+        <a href="{% url 'directie:planning_geschiedenis' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Planning Geschiedenis</a>
+    </nav>
+
+    <div class="navbar-user">
+        <div class="user-info">
+            <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+            <span class="user-role">Directie</span>
+        </div>
+        <a href="{% url 'accounts:logout' %}" class="logout-btn" title="Uitloggen">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+        </a>
+    </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main class="main">
+    <div class="page-header">
+        <h1>Planning Genereren</h1>
+        <p>Genereer automatisch een eerlijke verdeling van speelplaatsbewaking</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="planning-grid">
+
+        <!-- Links: formulier -->
+        <div class="card planning-form-card">
+            <div class="planning-form-titel">
+                <span class="ster-icon">✦</span>
+                <div>
+                    <strong>Automatische Planning Generator</strong>
+                    <p>Configureer de parameters en genereer een eerlijke verdeling</p>
+                </div>
+            </div>
+
+            <form method="post" action="{% url 'directie:planning_genereren' %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="maand">Selecteer Maand</label>
+                    <select name="maand" id="maand" class="form-select">
+                        {% for m in beschikbare_maanden %}
+                            <option value="{{ m.value }}" {% if m.value == geselecteerde_maand %}selected{% endif %}>
+                                {{ m.label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="bewakingen_per_dag">Bewakingen per Dag</label>
+                    <input type="number" name="bewakingen_per_dag" id="bewakingen_per_dag"
+                           class="form-input" value="{{ bewakingen_per_dag }}" min="1" max="5">
+                    <span class="form-hint">Aantal speelplaatsbewakingen die per schooldag nodig zijn</span>
+                </div>
+
+                <button type="submit" class="btn-genereren">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg>
+                    Planning Genereren
+                </button>
+            </form>
+        </div>
+
+        <!-- Rechts: info -->
+        <div class="planning-rechts">
+
+            <!-- Beschikbare leerkrachten -->
+            <div class="card">
+                <h3>Beschikbare Leerkrachten</h3>
+                <p class="card-sub">{{ actieve_leerkrachten }} van {{ totaal_leerkrachten }} leerkrachten beschikbaar</p>
+                <div class="leerkracht-lijst">
+                    {% for lk in leerkrachten %}
+                        <div class="leerkracht-rij">
+                            <span class="leerkracht-naam">{{ lk.user.get_full_name|default:lk.user.username }}</span>
+                            <span class="leerkracht-regime">{{ lk.werkregime }}%</span>
+                        </div>
+                    {% empty %}
+                        <p class="geen-data">Nog geen leerkrachten toegevoegd.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Planning gegenereerd bevestiging -->
+            {% if planning_gegenereerd %}
+            <div class="card card-succes">
+                <div class="succes-titel">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                    Planning Gegenereerd!
+                </div>
+                <p>Klik op de knop hieronder om de planning te bekijken</p>
+                <a href="{% url 'directie:kalender' %}" class="btn-bekijken">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                    Planning Bekijken
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Hoe werkt het -->
+            <div class="card">
+                <h3>Hoe werkt het?</h3>
+                <ul class="hoe-lijst">
+                    <li>Werkregime bepaalt aantal bewakingen per leerkracht</li>
+                    <li>Afwezigheden worden automatisch vermeden</li>
+                    <li>Eerlijke verdeling over alle schooldagen</li>
+                    <li>Planning per maand gegenereerd</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    © 2026 Childguard Scheduler – Ontwikkeld door Beau Ingang, Lenn Dehert, Sam Vossenberg
+</footer>
+
+</body>
+</html>

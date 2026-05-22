@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Childguard Scheduler – Planning Geschiedenis</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'directie/css/dashboard.css' %}">
+    <style>
+        .pg-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; }
+        .pg-card {
+            background:white; border:1px solid var(--border); border-radius:12px;
+            padding:1.5rem; transition:box-shadow .15s, border-color .15s;
+            display:flex; flex-direction:column; gap:.75rem;
+        }
+        .pg-card:hover { box-shadow:0 4px 16px rgba(0,0,0,.08); border-color:#cbd5e1; }
+        .pg-card-header { display:flex; justify-content:space-between; align-items:flex-start; }
+        .pg-maand { font-size:1.1rem; font-weight:700; color:var(--dark); }
+        .pg-jaar  { font-size:.82rem; color:var(--gray); margin-top:.1rem; }
+        .pg-badge { font-size:.72rem; font-weight:600; padding:.2rem .6rem; border-radius:20px; background:#dbeafe; color:#1e40af; }
+        .pg-stats { display:flex; gap:1.5rem; }
+        .pg-stat-getal { font-size:1.4rem; font-weight:800; color:var(--dark); line-height:1; }
+        .pg-stat-label { font-size:.75rem; color:var(--gray); margin-top:.1rem; }
+        .pg-footer { display:flex; justify-content:space-between; align-items:center; padding-top:.75rem; border-top:1px solid var(--border); }
+        .pg-datum  { font-size:.78rem; color:var(--gray); }
+        .btn-bekijk {
+            display:inline-flex; align-items:center; gap:.4rem;
+            padding:.45rem 1rem; background:var(--dark); color:white;
+            border-radius:8px; font-size:.82rem; font-weight:600;
+            text-decoration:none; transition:background .15s;
+        }
+        .btn-bekijk svg { width:14px; height:14px; }
+        .btn-bekijk:hover { background:#1e293b; }
+        .leeg-state {
+            text-align:center; padding:4rem 2rem;
+            background:white; border:1px solid var(--border); border-radius:12px;
+        }
+        .leeg-state svg { width:56px; height:56px; opacity:.2; margin-bottom:1rem; color:var(--gray); }
+        .leeg-state h3  { font-size:1.1rem; font-weight:700; color:#475569; margin-bottom:.4rem; }
+        .leeg-state p   { font-size:.88rem; color:var(--gray); margin-bottom:1.5rem; }
+    </style>
+</head>
+<body>
+<header class="navbar">
+    <div class="navbar-brand">
+        <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="white"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg>
+        </div>
+        <div class="brand-text">
+            <span class="brand-name">Childguard Scheduler</span>
+            <span class="brand-sub">Speelplaatsbewaking Planning</span>
+        </div>
+    </div>
+    <nav class="navbar-nav">
+        <a href="{% url 'directie:dashboard' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Dashboard</a>
+        <a href="{% url 'directie:kalender' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>Gezamenlijke Kalender</a>
+        <a href="{% url 'directie:planning_genereren' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12z"/></svg>Planning Genereren</a>
+        <a href="{% url 'directie:speciale_dagen' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/></svg>Speciale Dagen</a>
+        <a href="{% url 'directie:afmeldingen' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>Afmeldingen</a>
+        <a href="{% url 'directie:leerkrachten' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Leerkrachten</a>
+        <a href="{% url 'directie:school_overzicht' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>School Overzicht</a>
+        <a href="{% url 'directie:planning_geschiedenis' %}" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Planning Geschiedenis</a>
+    </nav>
+    <div class="navbar-user">
+        <div class="user-info">
+            <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+            <span class="user-role">Directie</span>
+        </div>
+        <a href="{% url 'accounts:logout' %}" class="logout-btn" title="Uitloggen">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+        </a>
+    </div>
+</header>
+
+<main class="main">
+    <div class="page-header">
+        <h1>Planning Geschiedenis</h1>
+        <p>Bekijk alle gegenereerde planningen — worden nooit verwijderd</p>
+    </div>
+
+    {% if planningen %}
+    <div class="pg-grid">
+        {% for item in planningen %}
+        <div class="pg-card">
+            <div class="pg-card-header">
+                <div>
+                    <div class="pg-maand">{{ item.label }}</div>
+                    <div class="pg-jaar">Aangemaakt op {{ item.planning.aangemaakt|date:"d/m/Y H:i" }}</div>
+                </div>
+                <span class="pg-badge">Opgeslagen</span>
+            </div>
+            <div class="pg-stats">
+                <div>
+                    <div class="pg-stat-getal">{{ item.totaal }}</div>
+                    <div class="pg-stat-label">bewakingen</div>
+                </div>
+            </div>
+            <div class="pg-footer">
+                <span class="pg-datum">Door: {{ item.planning.aangemaakt_door.get_full_name|default:item.planning.aangemaakt_door.username|default:"–" }}</span>
+                <a href="{% url 'directie:planning_detail' item.planning.id %}" class="btn-bekijk">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                    Bekijken
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="leeg-state">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+        <h3>Geen planningen beschikbaar</h3>
+        <p>Er zijn nog geen planningen gegenereerd</p>
+        <a href="{% url 'directie:planning_genereren' %}" class="btn-bekijk" style="display:inline-flex">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+            Planning Genereren
+        </a>
+    </div>
+    {% endif %}
+</main>
+
+<footer class="footer">
+    © 2026 Childguard Scheduler – Ontwikkeld door Beau Ingang, Lenn Dehert, Sam Vossenberg
+</footer>
+</body>
+</html>

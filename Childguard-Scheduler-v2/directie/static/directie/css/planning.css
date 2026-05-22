@@ -1,0 +1,205 @@
+/* ── PLANNING GENEREREN ── */
+.planning-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.planning-form-card { padding: 1.5rem; }
+
+.planning-form-titel {
+    display: flex;
+    gap: .75rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.ster-icon {
+    font-size: 1.3rem;
+    color: #f59e0b;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.planning-form-titel strong {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: .2rem;
+}
+
+.planning-form-titel p {
+    font-size: .85rem;
+    color: var(--gray);
+}
+
+/* Form elementen */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: .4rem;
+}
+
+.form-select,
+.form-input {
+    width: 100%;
+    padding: .65rem .9rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    color: var(--dark);
+    background: var(--white);
+    transition: border-color .15s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2364748b'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right .75rem center;
+    background-size: 18px;
+}
+
+.form-input {
+    background-image: none;
+}
+
+.form-select:focus,
+.form-input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px #dbeafe;
+}
+
+.form-hint {
+    display: block;
+    font-size: .78rem;
+    color: var(--gray);
+    margin-top: .35rem;
+}
+
+.btn-genereren {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
+    padding: .85rem;
+    background: var(--dark);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: .5rem;
+    transition: background .15s;
+}
+
+.btn-genereren svg { width: 18px; height: 18px; }
+.btn-genereren:hover { background: #1e293b; }
+
+/* Rechter kolom */
+.planning-rechts {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.planning-rechts .card { padding: 1.25rem 1.5rem; }
+.planning-rechts h3 { font-size: .95rem; font-weight: 700; color: var(--dark); margin-bottom: .25rem; }
+
+/* Leerkracht lijst */
+.leerkracht-lijst {
+    margin-top: .75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.leerkracht-rij {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: .88rem;
+}
+
+.leerkracht-rij:last-child { border-bottom: none; }
+.leerkracht-naam { color: var(--dark); font-weight: 500; }
+.leerkracht-regime { color: var(--gray); font-size: .82rem; }
+
+.geen-data { font-size: .85rem; color: var(--gray); font-style: italic; }
+
+/* Succes kaart */
+.card-succes {
+    background: #f0fdf4;
+    border-color: #86efac !important;
+}
+
+.succes-titel {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .95rem;
+    font-weight: 700;
+    color: #16a34a;
+    margin-bottom: .4rem;
+}
+
+.succes-titel svg { width: 18px; height: 18px; }
+.card-succes p { font-size: .85rem; color: #15803d; margin-bottom: 1rem; }
+
+.btn-bekijken {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
+    padding: .75rem;
+    background: #16a34a;
+    color: white;
+    border-radius: 10px;
+    font-size: .9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .15s;
+}
+
+.btn-bekijken svg { width: 18px; height: 18px; }
+.btn-bekijken:hover { background: #15803d; }
+
+/* Hoe lijst */
+.hoe-lijst {
+    padding-left: 1.1rem;
+    margin-top: .75rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.hoe-lijst li { font-size: .88rem; color: #475569; }
+
+/* Alert */
+.alert {
+    padding: .85rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-size: .9rem;
+    font-weight: 500;
+}
+
+.alert-success { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
+.alert-error   { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }

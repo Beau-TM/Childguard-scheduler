@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Childguard Scheduler – {{ label }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'directie/css/dashboard.css' %}">
+    <style>
+        .back-link { display:inline-flex; align-items:center; gap:.4rem; color:var(--blue); font-size:.88rem; font-weight:600; text-decoration:none; margin-bottom:1rem; }
+        .back-link svg { width:16px; height:16px; }
+        .detail-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.25rem; }
+        .detail-stat  { background:white; border:1px solid var(--border); border-radius:12px; padding:1.25rem 1.5rem; }
+        .detail-stat-label { font-size:.78rem; color:var(--gray); font-weight:600; text-transform:uppercase; letter-spacing:.04em; margin-bottom:.5rem; }
+        .detail-stat-getal { font-size:1.8rem; font-weight:800; color:var(--dark); }
+
+        .dag-wrap { background:white; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:1rem; }
+        .dag-header { padding:.75rem 1.25rem; background:#f8fafc; border-bottom:1px solid var(--border); font-weight:700; font-size:.9rem; color:var(--dark); }
+        .moment-rij { display:flex; align-items:flex-start; padding:.65rem 1.25rem; border-bottom:1px solid var(--border); gap:1rem; }
+        .moment-rij:last-child { border-bottom:none; }
+        .moment-label { min-width:100px; font-size:.82rem; font-weight:600; color:var(--gray); text-transform:capitalize; }
+        .bewaking-badges { display:flex; flex-wrap:wrap; gap:.4rem; }
+        .bewaking-badge { font-size:.78rem; padding:.2rem .6rem; border-radius:6px; background:#f1f5f9; color:#334155; font-weight:500; }
+        .sp-groot { background:#dbeafe; color:#1e40af; }
+        .sp-klein { background:#dcfce7; color:#166534; }
+
+        .lk-tabel { width:100%; border-collapse:collapse; }
+        .lk-tabel th { padding:.65rem 1.25rem; font-size:.78rem; color:var(--gray); font-weight:600; text-align:left; text-transform:uppercase; letter-spacing:.04em; background:#f8fafc; border-bottom:1px solid var(--border); }
+        .lk-tabel td { padding:.75rem 1.25rem; border-bottom:1px solid var(--border); font-size:.9rem; }
+        .lk-tabel tr:last-child td { border-bottom:none; }
+        .bar-wrap { background:#e2e8f0; border-radius:99px; height:6px; width:120px; overflow:hidden; display:inline-block; vertical-align:middle; margin-left:.5rem; }
+        .bar-fill  { height:100%; border-radius:99px; background:var(--blue); }
+    </style>
+</head>
+<body>
+<header class="navbar">
+    <div class="navbar-brand">
+        <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="white"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg>
+        </div>
+        <div class="brand-text">
+            <span class="brand-name">Childguard Scheduler</span>
+            <span class="brand-sub">Speelplaatsbewaking Planning</span>
+        </div>
+    </div>
+    <nav class="navbar-nav">
+        <a href="{% url 'directie:dashboard' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Dashboard</a>
+        <a href="{% url 'directie:kalender' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>Gezamenlijke Kalender</a>
+        <a href="{% url 'directie:planning_genereren' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12z"/></svg>Planning Genereren</a>
+        <a href="{% url 'directie:speciale_dagen' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/></svg>Speciale Dagen</a>
+        <a href="{% url 'directie:afmeldingen' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>Afmeldingen</a>
+        <a href="{% url 'directie:leerkrachten' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Leerkrachten</a>
+        <a href="{% url 'directie:school_overzicht' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>School Overzicht</a>
+        <a href="{% url 'directie:planning_geschiedenis' %}" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Planning Geschiedenis</a>
+    </nav>
+    <div class="navbar-user">
+        <div class="user-info">
+            <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+            <span class="user-role">Directie</span>
+        </div>
+        <a href="{% url 'accounts:logout' %}" class="logout-btn" title="Uitloggen">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+        </a>
+    </div>
+</header>
+
+<main class="main">
+    <a href="{% url 'directie:planning_geschiedenis' %}" class="back-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        Terug naar overzicht
+    </a>
+
+    <div class="page-header">
+        <h1>{{ label }}</h1>
+        <p>Aangemaakt op {{ planning.aangemaakt|date:"d/m/Y H:i" }} door {{ planning.aangemaakt_door.get_full_name|default:planning.aangemaakt_door.username|default:"–" }}</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="detail-stats">
+        <div class="detail-stat">
+            <div class="detail-stat-label">Totaal bewakingen</div>
+            <div class="detail-stat-getal">{{ totaal_bewakingen }}</div>
+        </div>
+        <div class="detail-stat">
+            <div class="detail-stat-label">Schooldagen</div>
+            <div class="detail-stat-getal">{{ per_dag|length }}</div>
+        </div>
+        <div class="detail-stat">
+            <div class="detail-stat-label">Leerkrachten</div>
+            <div class="detail-stat-getal">{{ lk_stats|length }}</div>
+        </div>
+    </div>
+
+    <!-- Verdeling per leerkracht -->
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.25rem;">
+        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border)">
+            <h2 style="font-size:1rem;font-weight:700">Verdeling per Leerkracht</h2>
+        </div>
+        <table class="lk-tabel">
+            <thead><tr><th>Leerkracht</th><th>Bewakingen</th><th>Aandeel</th></tr></thead>
+            <tbody>
+            {% for s in lk_stats %}
+            <tr>
+                <td style="font-weight:600">{{ s.naam }}</td>
+                <td>{{ s.aantal }}</td>
+                <td>
+                    {{ s.aandeel }}%
+                    <span class="bar-wrap"><span class="bar-fill" style="width:{{ s.aandeel }}%"></span></span>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Per dag -->
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:.75rem">Planning per Dag</h2>
+    {% for dag in per_dag %}
+    <div class="dag-wrap">
+        <div class="dag-header">{{ dag.datum|date:"l d/m/Y" }}</div>
+        {% for moment, toewijzingen in dag.momenten.items %}
+        <div class="moment-rij">
+            <span class="moment-label">{{ moment|capfirst }}</span>
+            <div class="bewaking-badges">
+                {% for t in toewijzingen %}
+                <span class="bewaking-badge {% if 'Grote' in t.speelplaats %}sp-groot{% else %}sp-klein{% endif %}">
+                    {{ t.naam }} – {{ t.speelplaats }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</main>
+
+<footer class="footer">
+    © 2026 Childguard Scheduler – Ontwikkeld door Beau Ingang, Lenn Dehert, Sam Vossenberg
+</footer>
+</body>
+</html>

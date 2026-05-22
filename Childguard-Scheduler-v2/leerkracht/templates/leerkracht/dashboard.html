@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard – Childguard Scheduler</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'leerkracht/css/dashboard.css' %}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <div class="navbar-top">
+        <div class="navbar-brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg>
+            </div>
+            <div>
+                <span class="brand-name">Childguard Scheduler</span>
+                <span class="brand-sub">Speelplaatsbewaking Planning</span>
+            </div>
+        </div>
+        <div class="navbar-user">
+            <svg class="user-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+            <div>
+                <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+                <span class="user-role">Leerkracht</span>
+            </div>
+            <a href="{% url 'accounts:logout' %}" class="logout-btn" title="Uitloggen">
+                <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+            </a>
+        </div>
+    </div>
+    <nav class="subnav">
+        <a href="{% url 'leerkracht:dashboard' %}" class="active">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Dashboard
+        </a>
+        <a href="{% url 'leerkracht:gezamenlijke_kalender' %}">
+            <svg viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+            Gezamenlijke Kalender
+        </a>
+        <a href="{% url 'leerkracht:mijnlesuren' %}">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            Mijn Lesuren
+        </a>
+        <a href="{% url 'leerkracht:afmeldingen' %}">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            Afmeldingen
+        </a>
+    </nav>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+    <!-- Pagina titel -->
+    <div class="page-header">
+        <h1>Dashboard</h1>
+        <p>Welkom terug, <span class="welcome-naam">{{ request.user.get_full_name|default:request.user.username }}</span></p>
+    </div>
+
+    <!-- Django messages -->
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Notificaties -->
+    {% for notif in notificaties %}
+    <div class="notif-banner {% if notif.type == 'vervanger_aangesteld' %}notif-vervanger{% endif %}">
+        <svg viewBox="0 0 24 24">
+            {% if notif.type == 'vervanger_aangesteld' %}
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            {% else %}
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            {% endif %}
+        </svg>
+        <div>
+            <div class="notif-titel">
+                {% if notif.type == 'vervanger_aangesteld' %}📋 Bewaking toegewezen
+                {% else %}ℹ️ Melding{% endif %}
+            </div>
+            <div class="notif-tekst">{{ notif.bericht }}</div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Profiel kaart -->
+    <div class="profile-card">
+        <div class="profile-avatar">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+        </div>
+        <div>
+            <div class="profile-naam">{{ request.user.get_full_name|default:request.user.username }}</div>
+            <div class="profile-sub">Werkregime: {{ werkregime }}% | {{ huidige_maand }}</div>
+        </div>
+    </div>
+
+    <!-- Stat kaartjes -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <span class="stat-card-label">Bewakingen deze Maand</span>
+                <div class="stat-card-icon blauw">
+                    <svg viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+                </div>
+            </div>
+            <div class="stat-card-getal">{{ bewakingen_maand }}</div>
+            <div class="stat-card-sub">speelplaatsbewakingen</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <span class="stat-card-label">Lesuren per Week</span>
+                <div class="stat-card-icon groen">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                </div>
+            </div>
+            <div class="stat-card-getal">0</div>
+            <div class="stat-card-sub">lesuren ingevoerd</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <span class="stat-card-label">Open Problemen</span>
+                <div class="stat-card-icon oranje">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                </div>
+            </div>
+            <div class="stat-card-getal">{{ afmeldingen_nieuw }}</div>
+            <div class="stat-card-sub">gemelde problemen</div>
+        </div>
+    </div>
+
+    <!-- Komende bewakingen -->
+    <div class="komende-card">
+        <div class="komende-header">
+            <svg viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+            <h2>Komende Bewakingen</h2>
+        </div>
+        <p class="komende-sub">Uw eerstvolgende speelplaatsbewakingen</p>
+
+        {% if komende_bewakingen %}
+            {% for b in komende_bewakingen %}
+            <div class="bewaking-item">
+                <div>
+                    <span class="bewaking-datum">{{ b.datum|date:"d/m/Y" }}</span>
+                    <span class="bewaking-moment">{{ b.moment }}</span>
+                    <span class="bewaking-tijd">{{ b.tijd }}</span>
+                </div>
+                <span class="bewaking-sp">{{ b.speelplaats }}</span>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="leeg-state">
+            <svg viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+            <p>Geen komende bewakingen gepland</p>
+            <span>Neem contact op met de directie voor meer informatie</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Onderste rij -->
+    <div class="bottom-grid">
+        <!-- Snelle acties -->
+        <div class="card">
+            <h2>Snelle Acties</h2>
+            <p class="card-sub">Belangrijkste functies voor uw planning</p>
+            <div class="quick-links">
+                <a href="{% url 'leerkracht:gezamenlijke_kalender' %}" class="quick-link">
+                    <svg viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+                    Mijn Volledige Kalender
+                </a>
+                <a href="{% url 'leerkracht:mijnlesuren' %}" class="quick-link">
+                    <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 14H8v-2h8v2zm0-4H8v-2h8v2zm0-4H8V6h8v2z"/></svg>
+                    Lesuren Beheren
+                </a>
+                <a href="{% url 'leerkracht:gezamenlijke_kalender' %}" class="quick-link">
+                    <svg viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+                    Gezamenlijke Kalender
+                </a>
+                <a href="{% url 'leerkracht:afmeldingen' %}" class="quick-link">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                    Probleem Melden
+                </a>
+            </div>
+        </div>
+
+        <!-- Informatie -->
+        <div class="card">
+            <div class="info-header">
+                <div class="info-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                </div>
+                <h2>Informatie</h2>
+            </div>
+            <p class="card-sub">Hoe werkt de planning?</p>
+            <div class="info-items">
+                <div class="info-item">
+                    <span class="info-nummer">1</span>
+                    De directie genereert maandelijks een eerlijke planning
+                </div>
+                <div class="info-item">
+                    <span class="info-nummer">2</span>
+                    Bewakingen worden verdeeld op basis van uw werkregime
+                </div>
+                <div class="info-item">
+                    <span class="info-nummer">3</span>
+                    Uw persoonlijke kalender wordt automatisch bijgewerkt
+                </div>
+                <div class="info-item">
+                    <span class="info-nummer">4</span>
+                    U kunt problemen melden voor snelle oplossing
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<footer>© 2026 Childguard Scheduler – Ontwikkeld door Beau Ingang, Lenn Dehert, Sam Vossenberg</footer>
+
+<script src="{% static 'leerkracht/js/dashboard.js' %}"></script>
+</body>
+</html>

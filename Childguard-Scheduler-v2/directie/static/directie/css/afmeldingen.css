@@ -1,0 +1,208 @@
+/* ── AFMELDINGEN ── */
+
+.alert { padding:.85rem 1rem; border-radius:10px; margin-bottom:1rem; font-size:.9rem; font-weight:500; }
+.alert-success { background:#f0fdf4; color:#16a34a; border:1px solid #86efac; }
+.alert-warning  { background:#fffbeb; color:#92400e; border:1px solid #fcd34d; }
+.alert-error    { background:#fef2f2; color:#dc2626; border:1px solid #fca5a5; }
+
+/* Stat kaartjes */
+.afm-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.afm-stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--border);
+}
+
+.afm-stat-card.blauw  { background:#eff6ff; border-color:#bfdbfe; }
+.afm-stat-card.oranje { background:#fff7ed; border-color:#fed7aa; }
+.afm-stat-card.groen  { background:#f0fdf4; border-color:#bbf7d0; }
+
+.afm-stat-titel {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .88rem;
+    font-weight: 700;
+    margin-bottom: .25rem;
+}
+.afm-stat-card.blauw  .afm-stat-titel { color:#1e40af; }
+.afm-stat-card.oranje .afm-stat-titel { color:#92400e; }
+.afm-stat-card.groen  .afm-stat-titel { color:#166534; }
+.afm-stat-titel svg { width:16px; height:16px; }
+
+.afm-stat-sub   { font-size:.78rem; color:var(--gray); display:block; margin-bottom:.5rem; }
+.afm-stat-getal { font-size:2rem; font-weight:700; color:var(--dark); }
+.afm-stat-card.blauw  .afm-stat-getal { color:#1d4ed8; }
+.afm-stat-card.oranje .afm-stat-getal { color:#b45309; }
+.afm-stat-card.groen  .afm-stat-getal { color:#16a34a; }
+
+/* Grid */
+.afm-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 1.25rem;
+    align-items: start;
+}
+.afm-rechts { display:flex; flex-direction:column; gap:1.25rem; }
+
+/* Form */
+.afm-form-titel {
+    display:flex; gap:.75rem; align-items:flex-start;
+    margin-bottom:1.25rem; padding-bottom:1rem;
+    border-bottom:1px solid var(--border);
+}
+.afm-form-titel svg    { width:20px; height:20px; flex-shrink:0; margin-top:2px; }
+.afm-form-titel strong { display:block; font-size:1rem; font-weight:700; color:var(--dark); }
+.afm-form-titel p      { font-size:.85rem; color:var(--gray); margin-top:.15rem; }
+
+.afm-form-group { margin-bottom:1rem; }
+.afm-form-group label {
+    display:block; font-size:.88rem; font-weight:600;
+    color:var(--dark); margin-bottom:.4rem;
+}
+
+.afm-select,
+.afm-input,
+.afm-textarea {
+    width:100%;
+    padding:.65rem .9rem;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-family:'DM Sans', sans-serif;
+    font-size:.9rem;
+    color:var(--dark);
+    background:white;
+    transition:border-color .15s;
+    box-sizing:border-box;
+}
+.afm-select {
+    appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2364748b'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right .75rem center;
+    background-size:18px;
+    padding-right:2.5rem;
+}
+.afm-textarea { resize:vertical; min-height:80px; }
+.afm-select:focus, .afm-input:focus, .afm-textarea:focus {
+    outline:none; border-color:var(--blue); box-shadow:0 0 0 3px #dbeafe;
+}
+
+.afm-checkbox-group { margin-bottom:1rem; }
+.afm-checkbox-label {
+    display:flex; align-items:center; gap:.6rem;
+    font-size:.88rem; font-weight:500; color:var(--dark); cursor:pointer;
+}
+.afm-checkbox-label input[type=checkbox] { width:16px; height:16px; accent-color:var(--blue); }
+
+/* Knoppen */
+.btn-genereren {
+    width:100%; display:flex; align-items:center; justify-content:center;
+    gap:.6rem; padding:.85rem; background:var(--dark); color:white;
+    border:none; border-radius:10px; font-family:'DM Sans',sans-serif;
+    font-size:1rem; font-weight:600; cursor:pointer; margin-top:.5rem; transition:background .15s;
+}
+.btn-genereren svg { width:18px; height:18px; }
+.btn-genereren:hover { background:#1e293b; }
+
+/* Afmelding lijst */
+.afm-lijst { display:flex; flex-direction:column; gap:.75rem; margin-top:.75rem; }
+
+.afm-rij {
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:1rem 1.25rem;
+    background:white;
+    transition:box-shadow .15s;
+}
+.afm-rij:hover { box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.afm-rij.status-nieuw    { border-left:4px solid #ef4444; }
+.afm-rij.status-verwerkt { border-left:4px solid #f59e0b; }
+.afm-rij.status-opgelost { border-left:4px solid #22c55e; opacity:.75; }
+
+.afm-rij-top { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+
+.afm-naam   { display:block; font-size:.95rem; font-weight:700; color:var(--dark); }
+.afm-datum  { display:block; font-size:.82rem; color:var(--blue); font-weight:600; margin-top:.1rem; }
+.afm-reden  { display:block; font-size:.82rem; color:var(--gray); margin-top:.2rem; font-style:italic; }
+
+.afm-status-badge {
+    font-size:.75rem; font-weight:600; padding:.25rem .7rem;
+    border-radius:20px; white-space:nowrap;
+}
+.badge-nieuw    { background:#fee2e2; color:#b91c1c; }
+.badge-verwerkt { background:#fef3c7; color:#92400e; }
+.badge-opgelost { background:#dcfce7; color:#166534; }
+
+.afm-vervanger-info {
+    display:flex; align-items:center; gap:.4rem;
+    font-size:.82rem; color:#475569; margin-top:.6rem;
+    padding:.4rem .75rem; background:#f8fafc;
+    border-radius:6px; border:1px solid var(--border);
+}
+.afm-vervanger-info svg { width:14px; height:14px; flex-shrink:0; }
+
+.afm-acties {
+    display:flex; align-items:center; gap:.5rem;
+    margin-top:.75rem; padding-top:.75rem;
+    border-top:1px solid var(--border); flex-wrap:wrap;
+}
+
+.btn-auto {
+    display:inline-flex; align-items:center; gap:.4rem;
+    padding:.4rem .85rem; background:#eff6ff; color:#1d4ed8;
+    border:1px solid #bfdbfe; border-radius:7px;
+    font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:600; cursor:pointer;
+    transition:background .15s;
+}
+.btn-auto svg { width:14px; height:14px; }
+.btn-auto:hover { background:#dbeafe; }
+
+.afm-select-inline {
+    padding:.35rem .65rem; border:1px solid var(--border);
+    border-radius:7px; font-family:'DM Sans',sans-serif;
+    font-size:.82rem; color:var(--dark); background:white;
+    appearance:none; cursor:pointer;
+}
+
+.btn-manueel {
+    padding:.4rem .85rem; background:#0f172a; color:white;
+    border:none; border-radius:7px; font-family:'DM Sans',sans-serif;
+    font-size:.82rem; font-weight:600; cursor:pointer; white-space:nowrap;
+}
+.btn-manueel:hover { background:#1e293b; }
+
+.btn-oplossen {
+    display:inline-flex; align-items:center; gap:.4rem;
+    padding:.4rem .85rem; background:#f0fdf4; color:#16a34a;
+    border:1px solid #bbf7d0; border-radius:7px;
+    font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:600; cursor:pointer;
+}
+.btn-oplossen svg { width:14px; height:14px; }
+.btn-oplossen:hover { background:#dcfce7; }
+
+.btn-verwijder {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px; background:none;
+    border:1px solid var(--border); border-radius:7px;
+    color:#94a3b8; cursor:pointer; transition:all .15s; margin-left:auto;
+}
+.btn-verwijder svg { width:15px; height:15px; }
+.btn-verwijder:hover { background:#fee2e2; color:#ef4444; border-color:#fca5a5; }
+
+/* Leeg state */
+.afm-leeg {
+    display:flex; flex-direction:column; align-items:center;
+    padding:3rem 1rem; color:var(--gray); text-align:center;
+}
+.afm-leeg svg { width:48px; height:48px; color:#22c55e; margin-bottom:1rem; }
+.afm-leeg p   { font-size:.95rem; font-weight:600; color:#475569; }
+
+.card-sub { font-size:.85rem; color:var(--gray); margin-bottom:.5rem; }

@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gezamenlijke Kalender – Childguard Scheduler</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'leerkracht/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'leerkracht/css/gezamenlijke_kalender.css' %}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <div class="navbar-top">
+        <div class="navbar-brand">
+            <div class="brand-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg>
+            </div>
+            <div>
+                <span class="brand-name">Childguard Scheduler</span>
+                <span class="brand-sub">Speelplaatsbewaking Planning</span>
+            </div>
+        </div>
+        <div class="navbar-user">
+            <svg class="user-icon" width="28" height="28" viewBox="0 0 24 24" fill="#64748b"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+            <div>
+                <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+                <span class="user-role">Leerkracht</span>
+            </div>
+            <a href="{% url 'accounts:logout' %}" class="logout-btn" title="Uitloggen">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+            </a>
+        </div>
+    </div>
+    <nav class="subnav">
+        <a href="{% url 'leerkracht:dashboard' %}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Dashboard
+        </a>
+        <a href="{% url 'leerkracht:gezamenlijke_kalender' %}" class="active">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+            Gezamenlijke Kalender
+        </a>
+        <a href="{% url 'leerkracht:mijnlesuren' %}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            Mijn Lesuren
+        </a>
+        <a href="{% url 'leerkracht:afmeldingen' %}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            Afmeldingen
+        </a>
+    </nav>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+    <div class="page-header">
+        <h1>Gezamenlijke Kalender</h1>
+        <p>Overzicht van alle speelplaatsbewakingen per dag</p>
+    </div>
+
+    <div class="kal-card">
+        <!-- Header -->
+        <div class="kal-header">
+            <div class="kal-nav">
+                <a href="?jaar={{ vorige_jaar }}&maand={{ vorige_maand }}" class="kal-nav-btn">&#8249;</a>
+                <div class="kal-maand-label">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#2563eb"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+                    {{ maand_label }}
+                </div>
+                <a href="?jaar={{ volgende_jaar }}&maand={{ volgende_maand }}" class="kal-nav-btn">&#8250;</a>
+            </div>
+            <select id="maand-select" class="kal-maand-select">
+                {% for optie in dropdown_opties %}
+                <option value="{{ optie.value }}" {% if optie.actief %}selected{% endif %}>{{ optie.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <p class="kal-sub">Alle leerkrachten en hun toegewezen bewakingstijden — klik op een dag voor details</p>
+
+        <!-- Dag namen -->
+        <div class="dag-namen">
+            <div class="dag-naam">Ma</div>
+            <div class="dag-naam">Di</div>
+            <div class="dag-naam">Wo</div>
+            <div class="dag-naam">Do</div>
+            <div class="dag-naam">Vr</div>
+            <div class="dag-naam">Za</div>
+            <div class="dag-naam">Zo</div>
+        </div>
+
+        <!-- Kalender grid -->
+        <div class="kal-grid">
+            {% for dag in kalender_dagen %}
+            {% if dag.huidige_maand %}
+            <div class="dag-cel{% if dag.is_vandaag %} vandaag{% endif %}{% if dag.heeft_bewaking %} heeft-bewaking{% endif %}"
+                 data-datum="{{ dag.datum_str }}"
+                 data-dagnaam="{{ dag.dagnaam }}"
+                 data-bewakingen="{{ dag.bewakingen_json|escapejs }}">
+                <span class="dag-nr">{{ dag.nummer }}</span>
+                {% for naam in dag.preview_namen %}
+                <span class="bew-pill {% if naam == request.user.get_full_name or naam == request.user.username %}is-mij{% endif %}">{{ naam }}</span>
+                {% endfor %}
+                {% if dag.meer_dan_2 %}
+                <span class="bew-meer">+{{ dag.meer_dan_2 }} meer</span>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="dag-cel andere-maand">
+                {% if dag.nummer %}<span class="dag-nr">{{ dag.nummer }}</span>{% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Legende -->
+        <div class="legende-sectie">
+            <div class="legende-titel">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#64748b"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                Legende
+            </div>
+            <div class="legende-grid">
+                {% for lk in legende %}
+                <div class="legende-item{% if lk.is_mij %} is-mij{% endif %}" style="background:{{ lk.bg }};color:{{ lk.fg }}">
+                    {{ lk.naam }}{% if lk.is_mij %} ★{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="bewakingstijden">
+                <div class="bewakingstijden-titel">Bewakingstijden</div>
+                <ul>
+                    <li>• 10:05 - 10:20 (Ochtendpauze)</li>
+                    <li>• 12:05 - 13:20 (Middagpauze)</li>
+                    <li>• 14:10 - 14:25 (Namiddagpauze)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- POPUP -->
+<div class="popup-overlay" id="popup-overlay">
+    <div class="popup">
+        <div class="popup-header">
+            <div>
+                <div class="popup-datum" id="popup-datum"></div>
+                <div class="popup-dag"   id="popup-dag"></div>
+            </div>
+            <button class="popup-sluit" id="popup-sluit">✕</button>
+        </div>
+        <div id="popup-inhoud"></div>
+    </div>
+</div>
+
+<footer>© 2026 Childguard Scheduler – Ontwikkeld door Beau Ingang, Lenn Dehert, Sam Vossenberg</footer>
+
+<script src="{% static 'leerkracht/js/gezamenlijke_kalender.js' %}"></script>
+</body>
+</html>

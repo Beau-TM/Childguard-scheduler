@@ -1,0 +1,279 @@
+/* ── GEZAMENLIJKE KALENDER ── */
+
+.kal-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.kal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .75rem;
+}
+
+.kal-nav {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.kal-nav-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background .15s;
+}
+.kal-nav-btn:hover { background: var(--bg); }
+
+.kal-maand-label {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--dark);
+}
+
+.kal-maand-select {
+    padding: .35rem .75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .85rem;
+    color: var(--dark);
+    background: var(--white);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2364748b'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right .5rem center;
+    background-size: 16px;
+    padding-right: 1.75rem;
+}
+
+.kal-sub {
+    font-size: .85rem;
+    color: var(--gray);
+    margin-bottom: 1.25rem;
+}
+
+.dag-namen {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin-bottom: 3px;
+}
+
+.dag-naam {
+    text-align: center;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--gray);
+    padding: .5rem 0;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.kal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+}
+
+.dag-cel {
+    min-height: 100px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .4rem;
+    background: var(--white);
+    cursor: pointer;
+    transition: background .1s, border-color .1s;
+    overflow: hidden;
+}
+
+.dag-cel:hover { background: #f8fafc; border-color: #cbd5e1; }
+
+.dag-cel.andere-maand {
+    background: var(--bg);
+    opacity: .5;
+    cursor: default;
+}
+.dag-cel.andere-maand:hover { background: var(--bg); border-color: var(--border); }
+
+.dag-cel.vandaag {
+    border-color: var(--blue);
+    border-width: 2px;
+    background: var(--blue-light);
+}
+
+.dag-cel.heeft-bewaking { background: #f0fdf4; border-color: #86efac; }
+.dag-cel.heeft-bewaking:hover { background: #dcfce7; }
+
+.dag-nr {
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: .25rem;
+    display: block;
+}
+.dag-cel.andere-maand .dag-nr { color: var(--gray); }
+.dag-cel.vandaag .dag-nr { color: var(--blue); }
+
+.bew-pill {
+    display: block;
+    font-size: .65rem;
+    padding: .1rem .3rem;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-weight: 500;
+}
+.bew-pill.is-mij { background: #dcfce7; color: #166534; font-weight: 700; }
+.bew-meer { font-size: .6rem; color: var(--gray); margin-top: 1px; }
+
+/* LEGENDE */
+.legende-sectie {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+}
+
+.legende-titel {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: .75rem;
+}
+
+.legende-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: .4rem;
+    margin-bottom: 1rem;
+}
+
+.legende-item {
+    font-size: .82rem;
+    padding: .35rem .75rem;
+    border-radius: 6px;
+    font-weight: 500;
+}
+.legende-item.is-mij { font-weight: 700; }
+
+.bewakingstijden {
+    background: var(--blue-light);
+    border: 1px solid var(--blue-border);
+    border-radius: 8px;
+    padding: .75rem 1rem;
+}
+.bewakingstijden-titel { font-size: .82rem; font-weight: 700; color: var(--blue); margin-bottom: .4rem; }
+.bewakingstijden ul { list-style: none; display: flex; flex-direction: column; gap: .2rem; }
+.bewakingstijden li { font-size: .8rem; color: #1e40af; }
+
+/* POPUP */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .45);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+.popup-overlay.actief { display: flex; }
+
+.popup {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 1.75rem;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.15);
+    animation: popupIn .2s ease;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+@keyframes popupIn {
+    from { opacity: 0; transform: scale(.95) translateY(8px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.popup-datum { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+.popup-dag { font-size: .85rem; color: var(--gray); margin-top: .1rem; }
+
+.popup-sluit {
+    width: 30px; height: 30px;
+    border-radius: 50%; border: none;
+    background: var(--bg); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray); font-size: 1.1rem;
+    transition: background .15s; flex-shrink: 0;
+}
+.popup-sluit:hover { background: var(--border); color: var(--dark); }
+
+.popup-leeg { text-align: center; padding: 1.5rem; color: var(--gray); font-size: .9rem; }
+
+.popup-moment { margin-bottom: 1rem; }
+.popup-moment:last-child { margin-bottom: 0; }
+
+.popup-moment-titel {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: .5rem;
+}
+.popup-moment-tijd { font-size: .75rem; color: var(--blue); font-weight: 600; margin-left: auto; }
+
+.popup-speelplaats {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .6rem .85rem;
+    margin-bottom: .4rem;
+}
+.popup-sp-naam {
+    font-size: .78rem; font-weight: 600; color: var(--gray);
+    text-transform: uppercase; letter-spacing: .03em; margin-bottom: .3rem;
+}
+
+.popup-lk-lijst { display: flex; flex-direction: column; gap: .25rem; }
+.popup-lk { display: flex; align-items: center; gap: .5rem; font-size: .85rem; font-weight: 500; color: var(--dark); }
+.popup-lk-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--blue); }
+.popup-lk.is-mij { font-weight: 700; color: var(--green); }
+.popup-lk.is-mij .popup-lk-dot { background: var(--green); }

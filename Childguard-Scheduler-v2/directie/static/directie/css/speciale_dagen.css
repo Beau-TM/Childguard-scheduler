@@ -1,0 +1,232 @@
+/* Form elementen - zelfde als planning.css */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: .4rem;
+}
+
+.form-select,
+.form-input {
+    width: 100%;
+    padding: .65rem .9rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: "DM Sans", sans-serif;
+    font-size: .9rem;
+    color: var(--dark);
+    background: var(--white);
+    transition: border-color .15s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2364748b'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right .75rem center;
+    background-size: 18px;
+}
+
+.form-input {
+    background-image: none;
+}
+
+.form-select:focus,
+.form-input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px #dbeafe;
+}
+
+.btn-toevoegen {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
+    padding: .85rem;
+    background: var(--dark);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: .5rem;
+    transition: background .15s;
+}
+.btn-toevoegen svg { width: 18px; height: 18px; }
+.btn-toevoegen:hover { background: #1e293b; }
+
+/* Grid layout */
+.sd-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.sd-links  { display: flex; flex-direction: column; gap: 1.25rem; }
+.sd-rechts { display: flex; flex-direction: column; gap: 1.25rem; }
+
+/* Formulier titel */
+.sd-form-titel {
+    display: flex;
+    gap: .75rem;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+.sd-form-titel svg      { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
+.sd-form-titel strong   { display: block; font-size: 1rem; font-weight: 700; color: var(--dark); }
+.sd-form-titel p        { font-size: .85rem; color: var(--gray); margin-top: .15rem; }
+
+.sd-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Lijst */
+.sd-lijst { display: flex; flex-direction: column; }
+
+.sd-rij {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .75rem .25rem;
+    border-bottom: 1px solid var(--border);
+    gap: 1rem;
+}
+.sd-rij:last-child { border-bottom: none; }
+.sd-rij:hover      { background: var(--light); border-radius: 8px; }
+
+.sd-rij-links {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+.sd-type-icon { font-size: 1.1rem; }
+
+.sd-datum       { display: block; font-size: .88rem; font-weight: 600; color: var(--dark); }
+.sd-beschrijving{ display: block; font-size: .8rem;  color: var(--gray); margin-top: 1px; }
+
+.sd-rij-rechts {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-shrink: 0;
+}
+
+.sd-type-badge {
+    font-size: .75rem;
+    font-weight: 600;
+    padding: .2rem .6rem;
+    border-radius: 6px;
+}
+.type-badge-studiedag { background: #f3e8ff; color: #6b21a8; }
+.type-badge-sportdag  { background: #dcfce7; color: #166534; }
+.type-badge-andere    { background: #f1f5f9; color: #475569; }
+
+.sd-verwijder-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #94a3b8;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    transition: background .15s, color .15s;
+}
+.sd-verwijder-btn:hover { background: #fee2e2; color: #ef4444; }
+.sd-verwijder-btn svg   { width: 16px; height: 16px; }
+
+/* Leeg state */
+.sd-leeg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 1rem;
+    color: var(--gray);
+    text-align: center;
+}
+.sd-leeg svg  { width: 40px; height: 40px; margin-bottom: .75rem; opacity: .3; }
+.sd-leeg p    { font-size: .95rem; font-weight: 600; color: #475569; margin-bottom: .25rem; }
+.sd-leeg span { font-size: .82rem; }
+
+/* Rechter kolom kaarten */
+.sd-rechts .card { padding: 1.25rem 1.5rem; }
+.sd-rechts h3    { font-size: .95rem; font-weight: 700; color: var(--dark); margin-bottom: .75rem; }
+
+/* Info kaart */
+.card-info { background: #eff6ff; border-color: #bfdbfe !important; }
+.info-titel {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .9rem;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: .6rem;
+}
+.info-titel svg { width: 18px; height: 18px; }
+.card-info p        { font-size: .85rem; color: #1e40af; line-height: 1.5; }
+.card-info strong   { color: #1e3a8a; }
+
+/* Overzicht */
+.sd-overzicht {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.sd-overzicht-rij {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .65rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: .88rem;
+}
+.sd-overzicht-rij:last-child { border-bottom: none; }
+.totaal-rij { background: var(--light); font-weight: 600; }
+.sd-overzicht-links {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    color: var(--dark);
+}
+.sd-count           { font-weight: 700; font-size: .9rem; }
+.sd-count.studiedag { color: #7c3aed; }
+.sd-count.andere    { color: #64748b; }
+
+/* Automatisch meegenomen */
+.auto-lijst { display: flex; flex-direction: column; gap: .6rem; }
+.auto-rij {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .65rem 1rem;
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+.auto-icon { font-size: 1.1rem; }
+.auto-naam { display: block; font-size: .88rem; font-weight: 600; color: var(--dark); }
+.auto-sub  { display: block; font-size: .78rem; color: var(--gray); margin-top: 1px; }
+
+/* Card sub */
+.card-sub { font-size: .85rem; color: var(--gray); margin-bottom: 1rem; }
+
+/* Nieuwe type badges en counts */
+.sd-count.facultatief { color: #0369a1; }
+.sd-count.extra       { color: #64748b; }
+.type-badge-pedagogischestudiedag { background: #f3e8ff; color: #6b21a8; }
+.type-badge-facultatievevrijdag   { background: #dbeafe; color: #1e40af; }
+.type-badge-extra                 { background: #f1f5f9; color: #475569; }

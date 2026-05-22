@@ -1,0 +1,330 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Childguard Scheduler – Gezamenlijke Kalender</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'directie/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'directie/css/kalender.css' %}">
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<header class="navbar">
+    <div class="navbar-brand">
+        <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="white"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg>
+        </div>
+        <div class="brand-text">
+            <span class="brand-name">Childguard Scheduler</span>
+            <span class="brand-sub">Speelplaatsbewaking Planning</span>
+        </div>
+    </div>
+
+    <nav class="navbar-nav">
+        <a href="{% url 'directie:dashboard' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Dashboard</a>
+        <a href="{% url 'directie:kalender' %}" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>Gezamenlijke Kalender</a>
+        <a href="{% url 'directie:planning_genereren' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 18H5V9h14v12z"/></svg>Planning Genereren</a>
+        <a href="{% url 'directie:speciale_dagen' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/></svg>Speciale Dagen</a>
+        <a href="{% url 'directie:afmeldingen' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>Afmeldingen</a>
+        <a href="{% url 'directie:leerkrachten' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Leerkrachten</a>
+        <a href="{% url 'directie:school_overzicht' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>School Overzicht</a>
+        <a href="{% url 'directie:planning_geschiedenis' %}" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Planning Geschiedenis</a>
+    </nav>
+
+    <div class="navbar-user">
+        <div class="user-info">
+            <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+            <span class="user-role">Directie</span>
+        </div>
+        <a href="{% url 'accounts:logout' %}" class="logout-btn" title="Uitloggen">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+        </a>
+    </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main class="main">
+    <div class="page-header">
+        <h1>Gezamenlijke Kalender</h1>
+        <p>Overzicht van alle speelplaatsbewakingen per dag</p>
+    </div>
+
+    <div class="card kalender-card">
+        <!-- Kalender navigatie -->
+        <div class="kal-nav">
+            <div class="kal-nav-left">
+                <button class="kal-btn" id="prevMonth">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                </button>
+                <div class="kal-maand-titel">
+                    <svg viewBox="0 0 24 24" fill="currentColor" style="color:var(--blue)"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+                    <span id="maandTitel"></span>
+                </div>
+                <button class="kal-btn" id="nextMonth">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                </button>
+            </div>
+            <select class="kal-select" id="maandSelect"></select>
+        </div>
+        <p class="kal-sub">Alle leerkrachten en hun toegewezen bewakingstijden</p>
+
+        <!-- Weekdagen header -->
+        <div class="kal-grid-header">
+            <div>Ma</div><div>Di</div><div>Wo</div>
+            <div>Do</div><div>Vr</div><div>Za</div><div>Zo</div>
+        </div>
+
+        <!-- Kalender dagen -->
+        <div class="kal-grid" id="kalGrid"></div>
+    </div>
+
+    <!-- Legende -->
+    <div class="card legende-card">
+        <div class="legende-titel">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            Legende
+        </div>
+        <div class="legende-namen" id="legendeNamen"></div>
+        <div class="legende-tijden">
+            <strong>Bewakingstijden</strong>
+            <ul>
+                <li>10:05 – 10:20 (Ochtendpauze)</li>
+                <li>12:05 – 13:20 (Middagpauze)</li>
+                <li>14:10 – 14:25 (Namiddagpauze)</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<!-- ── MODAL ── -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="modalTitel"></h3>
+            <button class="modal-close" id="modalClose">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+    © 2026 Childguard Scheduler – Ontwikkeld door Beau Ingang, Lenn Dehert, Sam Vossenberg
+</footer>
+
+<script>
+// ── DATA (later vanuit Django context) ──
+const leerkrachten = [
+    { naam: 'Anna Janssens',   kleur: '#bbf7d0', tekst: '#166534' },
+    { naam: 'Pieter De Vries', kleur: '#e9d5ff', tekst: '#6b21a8' },
+    { naam: 'Sophie Peeters',  kleur: '#fed7aa', tekst: '#9a3412' },
+    { naam: 'Luc Vermeulen',   kleur: '#fecaca', tekst: '#991b1b' },
+    { naam: 'Emma Claes',      kleur: '#bfdbfe', tekst: '#1e40af' },
+];
+
+// Bewakingen per dag: { 'YYYY-MM-DD': { ochtend: [{naam, speelplaats},...], middag:[], namiddag:[] } }
+const bewakingen = {};
+
+// Vul wat voorbeelddata in voor maart 2026
+function vulVoorbeeldData() {
+    const lk = leerkrachten;
+    const mar = '2026-03';
+    // Weekdagen in maart 2026 die schooldagen zijn (ma-vr)
+    const schooldagen = [2,3,4,5,6,9,10,11,12,13,16,17,18,19,20,23,24,25,26,27,30,31];
+    schooldagen.forEach((dag, i) => {
+        const key = `${mar}-${String(dag).padStart(2,'0')}`;
+        const l = lk;
+        bewakingen[key] = {
+            ochtend:  [ { naam: l[i%5].naam, sp: 'Grote Speelplaats' }, { naam: l[(i+1)%5].naam, sp: 'Grote Speelplaats' },
+                        { naam: l[(i+2)%5].naam, sp: 'Kleine Speelplaats' }, { naam: l[(i+3)%5].naam, sp: 'Kleine Speelplaats' } ],
+            middag:   [ { naam: l[(i+1)%5].naam, sp: 'Grote Speelplaats' }, { naam: l[(i+2)%5].naam, sp: 'Grote Speelplaats' },
+                        { naam: l[(i+3)%5].naam, sp: 'Kleine Speelplaats' }, { naam: l[(i+4)%5].naam, sp: 'Kleine Speelplaats' } ],
+            namiddag: [ { naam: l[(i+2)%5].naam, sp: 'Grote Speelplaats' }, { naam: l[(i+3)%5].naam, sp: 'Grote Speelplaats' },
+                        { naam: l[(i+4)%5].naam, sp: 'Kleine Speelplaats' }, { naam: l[(i+0)%5].naam, sp: 'Kleine Speelplaats' } ],
+        };
+    });
+}
+vulVoorbeeldData();
+
+// ── STAAT ──
+let huidigJaar  = new Date().getFullYear();
+let huidigMaand = new Date().getMonth(); // 0-based
+const vandaag   = new Date();
+
+const maandNamen = ['januari','februari','maart','april','mei','juni',
+                    'juli','augustus','september','oktober','november','december'];
+
+// ── LEGENDE ──
+function bouwLegende() {
+    const el = document.getElementById('legendeNamen');
+    el.innerHTML = leerkrachten.map(l =>
+        `<span class="legende-badge" style="background:${l.kleur};color:${l.tekst}">${l.naam}</span>`
+    ).join('');
+}
+
+// ── SELECT ──
+function bouwSelect() {
+    const sel = document.getElementById('maandSelect');
+    sel.innerHTML = '';
+    for (let m = 0; m < 12; m++) {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = `${maandNamen[m]} ${huidigJaar}`;
+        if (m === huidigMaand) opt.selected = true;
+        sel.appendChild(opt);
+    }
+}
+
+function kleurVoorNaam(naam) {
+    return leerkrachten.find(l => l.naam === naam) || { kleur: '#f1f5f9', tekst: '#64748b' };
+}
+
+// ── KALENDER ──
+function bouwKalender() {
+    document.getElementById('maandTitel').textContent =
+        `${maandNamen[huidigMaand]} ${huidigJaar}`;
+
+    const grid = document.getElementById('kalGrid');
+    grid.innerHTML = '';
+
+    const eerstedag = new Date(huidigJaar, huidigMaand, 1);
+    const laagstedag = new Date(huidigJaar, huidigMaand + 1, 0);
+
+    // Ma=0 ... Zo=6
+    let startOffset = (eerstedag.getDay() + 6) % 7;
+
+    // Vorige maand opvullen
+    const vorigeMaand = new Date(huidigJaar, huidigMaand, 0);
+    for (let i = startOffset - 1; i >= 0; i--) {
+        const cel = document.createElement('div');
+        cel.className = 'kal-cel buiten';
+        cel.innerHTML = `<span class="kal-dag-nr">${vorigeMaand.getDate() - i}</span>`;
+        grid.appendChild(cel);
+    }
+
+    // Huidige maand
+    for (let dag = 1; dag <= laagstedag.getDate(); dag++) {
+        const datum = new Date(huidigJaar, huidigMaand, dag);
+        const key   = `${huidigJaar}-${String(huidigMaand+1).padStart(2,'0')}-${String(dag).padStart(2,'0')}`;
+        const isVandaag = datum.toDateString() === vandaag.toDateString();
+        const isWeekend = datum.getDay() === 0 || datum.getDay() === 6;
+        const data  = bewakingen[key];
+
+        const cel = document.createElement('div');
+        cel.className = 'kal-cel' + (isVandaag ? ' vandaag' : '') + (isWeekend ? ' weekend' : '');
+
+        let inhoud = `<span class="kal-dag-nr">${dag}</span>`;
+
+        if (data && !isWeekend) {
+            // Compacte weergave: eerste naam van elk moment zichtbaar
+            const alleNamen = [...data.ochtend, ...data.middag, ...data.namiddag];
+            const uniek = [...new Set(alleNamen.map(b => b.naam))].slice(0, 3);
+            inhoud += `<div class="kal-badges">`;
+            uniek.forEach(naam => {
+                const lk = kleurVoorNaam(naam);
+                inhoud += `<span class="kal-badge" style="background:${lk.kleur};color:${lk.tekst}">${naam.split(' ')[0]}</span>`;
+            });
+            if (alleNamen.length > uniek.length * 2) {
+                inhoud += `<span class="kal-badge meer">+meer</span>`;
+            }
+            inhoud += `</div>`;
+            cel.style.cursor = 'pointer';
+            cel.addEventListener('click', () => openModal(dag, key, data));
+        }
+
+        cel.innerHTML = inhoud;
+        grid.appendChild(cel);
+    }
+
+    // Volgende maand opvullen
+    const totaalCellen = startOffset + laagstedag.getDate();
+    const restCellen   = (7 - (totaalCellen % 7)) % 7;
+    for (let i = 1; i <= restCellen; i++) {
+        const cel = document.createElement('div');
+        cel.className = 'kal-cel buiten';
+        cel.innerHTML = `<span class="kal-dag-nr">${i}</span>`;
+        grid.appendChild(cel);
+    }
+
+    bouwSelect();
+}
+
+// ── MODAL ──
+function openModal(dag, key, data) {
+    const dagNamen = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+    const datum = new Date(huidigJaar, huidigMaand, dag);
+    document.getElementById('modalTitel').textContent =
+        `${dagNamen[datum.getDay()]} ${dag} ${maandNamen[huidigMaand]} ${huidigJaar}`;
+
+    const momenten = [
+        { label: 'Ochtendpauze', tijd: '10:05 – 10:20', data: data.ochtend },
+        { label: 'Middagpauze',  tijd: '12:05 – 13:20', data: data.middag  },
+        { label: 'Namiddagpauze',tijd: '14:10 – 14:25', data: data.namiddag},
+    ];
+
+    let html = '';
+    momenten.forEach(m => {
+        html += `<div class="modal-moment">
+            <div class="modal-moment-header">
+                <span class="modal-moment-label">${m.label}</span>
+                <span class="modal-moment-tijd">${m.tijd}</span>
+            </div>
+            <div class="modal-speelplaatsen">`;
+
+        const grote  = m.data.filter(b => b.sp === 'Grote Speelplaats');
+        const kleine = m.data.filter(b => b.sp === 'Kleine Speelplaats');
+
+        html += `<div class="modal-sp">
+            <div class="modal-sp-titel">🏫 Grote Speelplaats</div>`;
+        grote.forEach(b => {
+            const lk = kleurVoorNaam(b.naam);
+            html += `<span class="modal-naam-badge" style="background:${lk.kleur};color:${lk.tekst}">${b.naam}</span>`;
+        });
+        html += `</div><div class="modal-sp">
+            <div class="modal-sp-titel">🏠 Kleine Speelplaats</div>`;
+        kleine.forEach(b => {
+            const lk = kleurVoorNaam(b.naam);
+            html += `<span class="modal-naam-badge" style="background:${lk.kleur};color:${lk.tekst}">${b.naam}</span>`;
+        });
+        html += `</div></div></div>`;
+    });
+
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('modalOverlay').classList.add('open');
+}
+
+document.getElementById('modalClose').addEventListener('click', () => {
+    document.getElementById('modalOverlay').classList.remove('open');
+});
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('modalOverlay'))
+        document.getElementById('modalOverlay').classList.remove('open');
+});
+
+// ── NAVIGATIE ──
+document.getElementById('prevMonth').addEventListener('click', () => {
+    huidigMaand--;
+    if (huidigMaand < 0) { huidigMaand = 11; huidigJaar--; }
+    bouwKalender();
+});
+document.getElementById('nextMonth').addEventListener('click', () => {
+    huidigMaand++;
+    if (huidigMaand > 11) { huidigMaand = 0; huidigJaar++; }
+    bouwKalender();
+});
+document.getElementById('maandSelect').addEventListener('change', (e) => {
+    huidigMaand = parseInt(e.target.value);
+    bouwKalender();
+});
+
+// ── INIT ──
+bouwLegende();
+bouwKalender();
+</script>
+</body>
+</html>
