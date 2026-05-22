@@ -2,6 +2,8 @@
 
 Beau Ingang en Lenn Dehert
 
+Childguard-scheduler is een webapplicatie die speelplaatsbewakingen in scholen automatisch en eerlijk verdeelt onder leerkrachten. Het systeem houdt rekening met werkpercentages (voltijds/halftijds), afwezigheden, weekends en speciale dagen zoals feestdagen of studiedagen. Leerkrachten en directie kunnen inloggen via een beveiligd platform met elk hun eigen rechten en overzichten.
+
 ## Projectstructuur
 
 ```
