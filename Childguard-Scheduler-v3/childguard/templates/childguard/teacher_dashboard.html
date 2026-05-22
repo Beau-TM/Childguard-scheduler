@@ -1,0 +1,51 @@
+{% extends 'childguard/base.html' %}
+{% block title %}Mijn Dashboard – Childguard{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <h1 class="page-title">Welkom, <span class="text-blue-600">{{ teacher.name }}</span></h1>
+  <p class="page-sub">{{ current_month_display }} – Jouw persoonlijk overzicht</p>
+</div>
+
+<div class="grid grid-3 mb-8">
+  <div class="card stat-card">
+    <div class="stat-label">Bewakingen deze maand</div>
+    <div class="stat-value">{{ my_slots_count }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-label">Openstaande afmeldingen</div>
+    <div class="stat-value">{{ my_problems|length }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-label">Aankomende bewakingen</div>
+    <div class="stat-value">{{ upcoming_slots|length }}</div>
+  </div>
+</div>
+
+{% if upcoming_slots %}
+<div class="card mb-6">
+  <div class="card-header"><div class="card-title">📅 Aankomende Bewakingen</div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Datum</th><th>Tijdslot</th></tr></thead>
+      <tbody>
+        {% for slot in upcoming_slots %}
+        <tr>
+          <td>{{ slot.date }}</td>
+          <td><span class="badge badge-blue">{{ slot.time }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<div class="flex gap-4">
+  <a href="{% url 'master_calendar' %}" class="btn btn-outline">📆 Gezamenlijke Kalender</a>
+  {% if teacher %}
+  <a href="{% url 'teacher_calendar' teacher.pk %}" class="btn btn-primary">📅 Mijn Kalender</a>
+  {% endif %}
+  <a href="{% url 'absence_reporting' %}" class="btn btn-outline">⚠️ Afmelding Indienen</a>
+  <a href="{% url 'teaching_hours' %}" class="btn btn-outline">🕐 Mijn Bewakingen</a>
+</div>
+{% endblock %}

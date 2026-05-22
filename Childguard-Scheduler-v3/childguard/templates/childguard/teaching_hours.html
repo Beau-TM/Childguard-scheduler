@@ -1,0 +1,39 @@
+{% extends 'childguard/base.html' %}
+{% block title %}Mijn Lesuren – Childguard{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <h1 class="page-title">Mijn Lesuren / Bewakingen</h1>
+  <p class="page-sub">{{ teacher.name }} – {{ total_slots }} bewaking(en) in totaal</p>
+</div>
+
+{% for m in month_data %}
+<div class="card mb-4">
+  <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div class="card-title" style="text-transform:capitalize">{{ m.display }}</div>
+      <div class="card-desc">{{ m.count }} bewaking(en)</div>
+    </div>
+    <span class="badge badge-blue">{{ m.count }}</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Datum</th><th>Tijdslot</th></tr></thead>
+      <tbody>
+        {% for slot in m.slots %}
+        <tr>
+          <td>{{ slot.date }}</td>
+          <td><span class="badge badge-blue">{{ slot.time }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% empty %}
+<div class="card">
+  <div class="card-body" style="text-align:center;color:var(--gray-400);padding:2rem">
+    Nog geen bewakingen toegewezen.
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

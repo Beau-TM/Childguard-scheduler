@@ -1,0 +1,27 @@
+{% extends 'childguard/base.html' %}
+{% block title %}Planning Geschiedenis – Childguard{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <h1 class="page-title">Planning Geschiedenis</h1>
+  <p class="page-sub">Alle gegenereerde maandplanningen</p>
+</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Maand</th><th>Gegenereerd op</th><th>Aantal Slots</th><th>Acties</th></tr></thead>
+      <tbody>
+        {% for schedule in schedules %}
+        <tr>
+          <td class="font-medium" style="text-transform:capitalize">{{ schedule.month }}</td>
+          <td>{{ schedule.generated_at|date:"d/m/Y H:i" }}</td>
+          <td>{{ schedule.slots.count }}</td>
+          <td><a href="{% url 'master_calendar' %}?month={{ schedule.month }}" class="btn btn-outline btn-sm">Bekijken →</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:2rem">Nog geen planningen gegenereerd.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

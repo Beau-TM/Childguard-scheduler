@@ -1,0 +1,43 @@
+{% extends 'childguard/base.html' %}
+{% block title %}Leerkracht Bewerken – Childguard{% endblock %}
+{% block content %}
+<div style="max-width:32rem;margin:0 auto">
+  <div class="mb-6">
+    <h1 class="page-title">Leerkracht Bewerken</h1>
+    <p class="page-sub">{{ teacher.name }}</p>
+  </div>
+
+  {% if teacher.user %}
+  <div style="background:var(--green-50);border:1px solid var(--green-100);border-radius:var(--radius);padding:.75rem 1rem;margin-bottom:1rem;font-size:.875rem;color:#14532d;">
+    ✓ Loginaccount: <strong>{{ teacher.user.username }}</strong>
+    {% if teacher.user.first_login %} <span style="color:#b45309">(wachtwoord nog niet gewijzigd)</span>{% endif %}
+  </div>
+  {% else %}
+  <div style="background:var(--orange-50);border:1px solid var(--orange-200);border-radius:var(--radius);padding:.75rem 1rem;margin-bottom:1rem;font-size:.875rem;color:#7c2d12;">
+    ⚠️ Geen loginaccount. Vul gebruikersnaam en wachtwoord in om er één aan te koppelen.
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+      <div class="card-body space-y-4">
+        {% for field in form %}
+          <div class="form-group">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<div class="form-error">{{ field.errors }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        {% if form.non_field_errors %}
+          <div class="form-error">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <div class="flex gap-2">
+          <a href="{% url 'teacher_list' %}" class="btn btn-outline">Annuleren</a>
+          <button type="submit" class="btn btn-primary">Opslaan</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

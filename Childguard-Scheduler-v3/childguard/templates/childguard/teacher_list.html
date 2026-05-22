@@ -1,0 +1,138 @@
+{% extends 'childguard/base.html' %}
+{% block title %}Leerkrachten – Childguard{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="page-title">Leerkrachten Beheren</h1>
+    <p class="page-sub">{{ teachers|length }} leerkracht(en) in het systeem</p>
+  </div>
+  <button class="btn btn-primary" onclick="document.getElementById('add-modal').style.display='flex'">
+    ➕ Leerkracht Toevoegen
+  </button>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Naam</th>
+          <th>Werkregime</th>
+          <th>Login</th>
+          <th>Status</th>
+          <th>Bewakingen</th>
+          <th>Acties</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for teacher in teachers %}
+        <tr>
+          <td class="font-medium">{{ teacher.name }}</td>
+          <td>{{ teacher.work_percentage }}%</td>
+          <td>
+            {% if teacher.user %}
+              <span class="badge badge-green" title="{{ teacher.user.username }}">✓ Ingesteld</span>
+            {% else %}
+              <span class="badge badge-gray">Geen login</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if teacher.is_available %}
+              <span class="badge badge-green">✓ Beschikbaar</span>
+            {% else %}
+              <span class="badge badge-gray">✗ Niet beschikbaar</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'teacher_calendar' teacher.pk %}" class="text-blue-600 text-sm">
+              Kalender bekijken →
+            </a>
+          </td>
+          <td>
+            <div class="flex gap-2">
+              <a href="{% url 'teacher_edit' teacher.pk %}" class="btn btn-outline btn-sm">Bewerken</a>
+              <button type="button" class="btn btn-danger btn-sm"
+                onclick="openDeleteModal('{{ teacher.pk }}', '{{ teacher.name|escapejs }}')">
+                Verwijderen
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:2rem">
+          Nog geen leerkrachten toegevoegd.
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Teacher Modal -->
+<div id="add-modal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="card-title">Leerkracht Toevoegen</h2>
+      <button class="modal-close" onclick="document.getElementById('add-modal').style.display='none'">×</button>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="modal-body space-y-4">
+        {% for field in form %}
+          <div class="form-group">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="form-error">{{ field.errors }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        <div style="background:var(--blue-50);border:1px solid var(--blue-200);border-radius:var(--radius);padding:.75rem;font-size:.8rem;color:#1e3a5f;">
+          💡 <strong>Gebruikersnaam en wachtwoord zijn optioneel.</strong> Vul ze in als de leerkracht ook moet kunnen inloggen. Ze krijgen dan bij eerste login de vraag hun wachtwoord te wijzigen.
+        </div>
+        {% if form.non_field_errors %}
+          <div class="form-error">{{ form.non_field_errors }}</div>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('add-modal').style.display='none'">Annuleren</button>
+        <button type="submit" class="btn btn-primary">Toevoegen</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="card-title" style="color:#7f1d1d;">⚠️ Leerkracht verwijderen</h2>
+      <button class="modal-close" onclick="document.getElementById('delete-modal').style.display='none'">×</button>
+    </div>
+    <div class="modal-body">
+      <p>Ben je zeker dat je <strong id="delete-name"></strong> wilt verwijderen? Dit kan niet ongedaan worden gemaakt. Alle bijhorende bewakingsslots en afmeldingen blijven bewaard.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" onclick="document.getElementById('delete-modal').style.display='none'">Annuleren</button>
+      <form id="delete-form" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Ja, verwijderen</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% if form.errors %}
+<script>document.getElementById('add-modal').style.display='flex';</script>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openDeleteModal(pk, name) {
+  document.getElementById('delete-name').textContent = name;
+  document.getElementById('delete-form').action = '/teachers/' + pk + '/delete/';
+  document.getElementById('delete-modal').style.display = 'flex';
+}
+</script>
+{% endblock %}

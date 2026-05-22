@@ -1,0 +1,68 @@
+{% extends 'childguard/base.html' %}
+{% load custom_filters %}
+{% block title %}Gezamenlijke Kalender – Childguard{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+  <h1 class="page-title">Gezamenlijke Kalender</h1>
+  <p class="page-sub">Overzicht van alle speelplaatsbewakingen</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="cal-header">
+      <a href="?month={{ prev_month }}" class="btn btn-outline btn-sm">‹ Vorige</a>
+      <span class="cal-title">{{ month_display }}</span>
+      <a href="?month={{ next_month }}" class="btn btn-outline btn-sm">Volgende ›</a>
+    </div>
+  </div>
+  <div class="card-body" style="overflow-x:auto">
+    <table class="cal-grid">
+      <thead>
+        <tr>
+          {% for day in "Maandag,Dinsdag,Woensdag,Donderdag,Vrijdag,Zaterdag,Zondag"|split:"," %}
+          <th>{{ day }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for week in cal_grid %}
+        <tr>
+          {% for day in week %}
+            {% if day == None %}
+              <td class="cal-day empty"></td>
+            {% elif day.is_weekend %}
+              <td class="cal-day weekend">
+                <div class="cal-day-num">{{ day.date.day }}</div>
+              </td>
+            {% elif day.special %}
+              <td class="cal-day special" title="{{ day.special.reason }}">
+                <div class="cal-day-num">{{ day.date.day }}</div>
+                <div class="cal-special-label">{{ day.special.get_type_display }}</div>
+                <div style="font-size:.65rem;color:#854d0e">{{ day.special.reason|truncatechars:20 }}</div>
+              </td>
+            {% else %}
+              <td class="cal-day{% if day.is_today %} today{% endif %}">
+                <div class="cal-day-num">{{ day.date.day }}</div>
+                {% for slot in day.slots %}
+                  <div class="cal-slot" title="{{ slot.time }} – {% if slot.teacher %}{{ slot.teacher.name }}{% else %}Niet toegewezen{% endif %}">
+                    {{ slot.time }} {% if slot.teacher %}{{ slot.teacher.name|truncatechars:10 }}{% else %}–{% endif %}
+                  </div>
+                {% endfor %}
+              </td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="flex gap-4 mt-6 text-xs text-gray-500">
+  <span style="display:flex;align-items:center;gap:.35rem"><span style="width:.75rem;height:.75rem;background:#bfdbfe;border-radius:.2rem;display:inline-block"></span> Bewaking</span>
+  <span style="display:flex;align-items:center;gap:.35rem"><span style="width:.75rem;height:.75rem;background:#fef9c3;border-radius:.2rem;display:inline-block"></span> Speciale dag</span>
+  <span style="display:flex;align-items:center;gap:.35rem"><span style="width:.75rem;height:.75rem;background:#eff6ff;border:1px solid #2563eb;border-radius:.2rem;display:inline-block"></span> Vandaag</span>
+</div>
+{% endblock %}

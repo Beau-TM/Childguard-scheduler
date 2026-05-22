@@ -1,0 +1,33 @@
+{% extends 'childguard/base.html' %}
+{% block title %}School Overzicht – Childguard{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <h1 class="page-title">School Overzicht</h1>
+  <p class="page-sub">Statistieken per leerkracht</p>
+</div>
+<div class="grid grid-2 mb-8">
+  <div class="card stat-card"><div class="stat-label">Totale Leerkrachten</div><div class="stat-value">{{ total_teachers }}</div></div>
+  <div class="card stat-card"><div class="stat-label">Open Problemen</div><div class="stat-value">{{ open_problems }}</div></div>
+</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Leerkracht</th><th>Werkregime</th><th>Status</th><th>Totale Bewakingen</th><th>Problemen</th><th>Kalender</th></tr></thead>
+      <tbody>
+        {% for s in stats %}
+        <tr>
+          <td class="font-medium">{{ s.teacher.name }}</td>
+          <td>{{ s.teacher.work_percentage }}%</td>
+          <td>{% if s.teacher.is_available %}<span class="badge badge-green">Beschikbaar</span>{% else %}<span class="badge badge-gray">Niet beschikbaar</span>{% endif %}</td>
+          <td>{{ s.slot_count }}</td>
+          <td>{% if s.problem_count %}<span class="badge badge-orange">{{ s.problem_count }}</span>{% else %}<span class="text-gray-400">0</span>{% endif %}</td>
+          <td><a href="{% url 'teacher_calendar' s.teacher.pk %}" class="text-blue-600 text-sm">Bekijken →</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:2rem">Geen leerkrachten.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

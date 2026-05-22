@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inloggen – Childguard Scheduler</title>
+  <link rel="stylesheet" href="{% static 'childguard/css/main.css' %}"/>
+</head>
+<body>
+<div class="login-wrapper">
+  <div class="card login-card">
+    <div class="card-body">
+      <div class="login-header">
+        <div class="login-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <div class="login-title">Childguard Scheduler</div>
+        <div class="login-sub">Log in om toegang te krijgen tot het planningssysteem</div>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label" for="id_username">Gebruikersnaam</label>
+          <div class="input-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            {{ form.username }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_password">Wachtwoord</label>
+          <div class="input-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            {{ form.password }}
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full">Inloggen</button>
+      </form>
+
+      <div class="demo-block">
+        <p class="text-sm font-medium mb-4">Demo Accounts:</p>
+
+        <div class="demo-item demo-admin">
+          <strong>🔑 Systeembeheerder (Admin)</strong>
+          <div>Gebruiker: <code>admin</code> &nbsp; Wachtwoord: <code>admin123</code></div>
+          <div class="text-xs" style="color:#7e22ce;margin-top:.25rem">✓ Volledige toegang tot systeem</div>
+        </div>
+
+        <div class="demo-item demo-director">
+          <strong>👨‍💼 Directie</strong>
+          <div>Gebruiker: <code>directie</code> &nbsp; Wachtwoord: <code>directie123</code></div>
+          <div class="text-xs text-blue-600" style="margin-top:.25rem">✓ Kan planning beheren en statistieken bekijken</div>
+        </div>
+
+        <div class="demo-item demo-teacher">
+          <strong>👨‍🏫 Leerkracht</strong>
+          <div>Gebruiker: <code>teacher1</code> / <code>teacher2</code> / <code>teacher3</code></div>
+          <div>Wachtwoord: <code>teacher123</code></div>
+          <div class="text-xs" style="color:#d97706;margin-top:.25rem">ℹ️ Na eerste login moet u een eigen wachtwoord kiezen</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

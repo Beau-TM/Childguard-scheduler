@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Childguard Scheduler{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'childguard/css/main.css' %}" />
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<!-- HEADER -->
+<header class="header">
+  <div class="container header-inner">
+    <div class="header-brand">
+      <svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <div>
+        <div class="brand-name">Childguard Scheduler</div>
+        <div class="brand-sub">Speelplaatsbewaking Planning</div>
+      </div>
+    </div>
+    <div class="header-user">
+      <div class="user-info">
+        <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+        <div class="user-role">
+          {% if user.role == 'admin' %}Systeembeheerder
+          {% elif user.role == 'director' %}Directie
+          {% else %}Leerkracht{% endif %}
+        </div>
+      </div>
+      <a href="{% url 'logout' %}" class="btn btn-ghost btn-sm" title="Uitloggen">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="container" style="position:relative;">
+    <button class="nav-hamburger" id="nav-toggle" aria-label="Menu openen" onclick="document.getElementById('nav-menu').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-items" id="nav-menu">
+      <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        🏠 Dashboard
+      </a>
+      {% if user.role == 'admin' or user.role == 'director' %}
+          <a href="{% url 'teacher_list' %}" class="nav-link {% if 'teacher' in request.resolver_match.url_name %}active{% endif %}">
+            👥 Leerkrachten
+          </a>
+          <a href="{% url 'schedule_generate' %}" class="nav-link {% if request.resolver_match.url_name == 'schedule_generate' %}active{% endif %}">
+            📅 Planning Genereren
+          </a>
+          <a href="{% url 'schedule_history' %}" class="nav-link {% if request.resolver_match.url_name == 'schedule_history' %}active{% endif %}">
+            🕐 Geschiedenis
+          </a>
+          <a href="{% url 'special_days' %}" class="nav-link {% if request.resolver_match.url_name == 'special_days' %}active{% endif %}">
+            🎉 Speciale Dagen
+          </a>
+      {% endif %}
+      <a href="{% url 'master_calendar' %}" class="nav-link {% if request.resolver_match.url_name == 'master_calendar' %}active{% endif %}">
+        📆 Gezamenlijke Kalender
+      </a>
+      {% if user.role == 'teacher' %}
+        <a href="{% url 'teaching_hours' %}" class="nav-link {% if request.resolver_match.url_name == 'teaching_hours' %}active{% endif %}">
+          🕐 Mijn Lesuren
+        </a>
+      {% endif %}
+      {% if user.role == 'admin' or user.role == 'director' %}
+        <a href="{% url 'school_overview' %}" class="nav-link {% if request.resolver_match.url_name == 'school_overview' %}active{% endif %}">
+          📊 School Overzicht
+        </a>
+      {% endif %}
+      <a href="{% url 'absence_reporting' %}" class="nav-link {% if request.resolver_match.url_name == 'absence_reporting' %}active{% endif %}">
+        ⚠️ Afmeldingen
+        {% if unread_count %}<span class="badge-nav-red">{{ unread_count }}</span>{% endif %}
+      </a>
+    </div>
+  </div>
+</nav>
+{% endif %}
+
+<!-- MESSAGES -->
+{% if messages %}
+<div class="container mt-4">
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- MAIN -->
+<main class="main-content container">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+{% if user.is_authenticated %}
+<footer class="footer">
+  <div class="container">
+    <p>© 2026 Childguard Scheduler – Ontwikkeld door Beau Ingang &amp; Lenn Dehert</p>
+  </div>
+</footer>
+{% endif %}
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

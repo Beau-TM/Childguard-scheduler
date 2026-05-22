@@ -1,0 +1,10 @@
+{% extends 'childguard/base.html' %}
+{% block title %}Pagina niet gevonden – Childguard{% endblock %}
+{% block content %}
+<div style="text-align:center;padding:4rem 1rem;">
+  <div style="font-size:4rem;margin-bottom:1rem;">🔍</div>
+  <h1 class="page-title" style="margin-bottom:.5rem;">Pagina niet gevonden</h1>
+  <p class="page-sub" style="margin-bottom:2rem;">De pagina die je zoekt bestaat niet of is verplaatst.</p>
+  <a href="{% url 'dashboard' %}" class="btn btn-primary">← Terug naar dashboard</a>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'childguard/base.html' %}
+{% block title %}Planning Genereren – Childguard{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+  <h1 class="page-title">Nieuwe Planning Genereren</h1>
+  <p class="page-sub">Genereer automatisch een eerlijke speelplaatsbewaking-planning</p>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">✨ Planning Configureren</div>
+      <div class="card-desc">Stel de parameters in voor de nieuwe planning</div>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="card-body space-y-4">
+        {% for field in form %}
+          <div class="form-group">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="form-error">{{ field.errors }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary btn-full">
+          ✨ Planning Genereren
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">ℹ️ Hoe werkt de generator?</div>
+    </div>
+    <div class="card-body space-y-4 text-sm text-gray-600">
+      <div class="flex gap-2"><span class="text-blue-600 font-bold">1.</span> Selecteer de maand voor de planning</div>
+      <div class="flex gap-2"><span class="text-blue-600 font-bold">2.</span> Kies het aantal bewakingen per dag (standaard 3)</div>
+      <div class="flex gap-2"><span class="text-blue-600 font-bold">3.</span> Het systeem slaat speciale dagen (vakantie, uitstap) over</div>
+      <div class="flex gap-2"><span class="text-blue-600 font-bold">4.</span> Bewakingen worden eerlijk verdeeld op basis van werkpercentage</div>
+      <div class="flex gap-2"><span class="text-blue-600 font-bold">5.</span> Afwezige leerkrachten worden automatisch vermeden</div>
+
+      <div class="divider"></div>
+      <div style="background:var(--blue-50);border:1px solid var(--blue-200);border-radius:var(--radius);padding:.875rem">
+        <strong class="text-blue-600">Tijdslots:</strong>
+        <ul style="margin-top:.375rem;padding-left:1.25rem;color:var(--gray-600)">
+          <li>10:05 – 10:20 (ochtendpauze)</li>
+          <li>12:05 – 13:20 (middagpauze)</li>
+          <li>14:10 – 14:25 (namiddagpauze)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

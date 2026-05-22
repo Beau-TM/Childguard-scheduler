@@ -1,0 +1,55 @@
+{% extends 'childguard/base.html' %}
+{% block title %}Kalender {{ teacher.name }} – Childguard{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <h1 class="page-title">Kalender – {{ teacher.name }}</h1>
+  <p class="page-sub">{{ slot_count }} bewaking(en) in {{ month_display }}</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="cal-header">
+      <a href="?month={{ prev_month }}" class="btn btn-outline btn-sm">‹ Vorige</a>
+      <span class="cal-title">{{ month_display }}</span>
+      <a href="?month={{ next_month }}" class="btn btn-outline btn-sm">Volgende ›</a>
+    </div>
+  </div>
+  <div class="card-body" style="overflow-x:auto">
+    <table class="cal-grid">
+      <thead>
+        <tr>
+          <th>Ma</th><th>Di</th><th>Wo</th><th>Do</th><th>Vr</th><th>Za</th><th>Zo</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for week in cal_grid %}
+        <tr>
+          {% for day in week %}
+            {% if day == None %}
+              <td class="cal-day empty"></td>
+            {% elif day.is_weekend %}
+              <td class="cal-day weekend"><div class="cal-day-num">{{ day.date.day }}</div></td>
+            {% elif day.special %}
+              <td class="cal-day special" title="{{ day.special.reason }}">
+                <div class="cal-day-num">{{ day.date.day }}</div>
+                <div class="cal-special-label">{{ day.special.get_type_display }}</div>
+              </td>
+            {% else %}
+              <td class="cal-day{% if day.is_today %} today{% endif %}">
+                <div class="cal-day-num">{{ day.date.day }}</div>
+                {% for slot in day.slots %}
+                  <div class="cal-slot" title="{{ slot.time }}">{{ slot.time }}</div>
+                {% endfor %}
+              </td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="mt-6">
+  <a href="{% url 'teacher_list' %}" class="btn btn-outline">← Terug naar leerkrachten</a>
+</div>
+{% endblock %}

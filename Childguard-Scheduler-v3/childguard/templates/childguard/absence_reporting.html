@@ -1,0 +1,320 @@
+{% extends 'childguard/base.html' %}
+{% load custom_filters %}
+{% block title %}Afmeldingen – Childguard{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="page-title">Afmeldingen</h1>
+    <p class="page-sub">{% if is_admin %}Beheer van alle leerkracht-afmeldingen{% else %}Jouw afmeldingen voor bewakingen{% endif %}</p>
+  </div>
+  <div class="flex gap-2">
+    {% if is_admin and unread_count %}
+      <form method="post" action="{% url 'mark_problems_read' %}">
+        {% csrf_token %}
+        <button class="btn btn-outline btn-sm">✓ Alles gelezen</button>
+      </form>
+    {% endif %}
+    <button class="btn btn-primary" onclick="document.getElementById('add-modal').style.display='flex'">
+      ➕ Afmelding Indienen
+    </button>
+  </div>
+</div>
+
+{% if is_admin and unread_count %}
+<div class="alert alert-warning mb-6" style="display:flex;align-items:center;justify-content:space-between;">
+  <span>🔔 Er {% if unread_count == 1 %}is 1 nieuwe afmelding{% else %}zijn {{ unread_count }} nieuwe afmeldingen{% endif %} die jouw aandacht vereist.</span>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          {% if is_admin %}<th>Leerkracht</th>{% endif %}
+          <th>Datum</th>
+          <th>Slot</th>
+          <th>Beschrijving</th>
+          <th>Status</th>
+          <th>Vervanger</th>
+          {% if is_admin %}<th>Acties</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for problem in problems %}
+        <tr{% if problem.is_new and is_admin %} style="background:#fff7ed"{% endif %}>
+          {% if is_admin %}
+          <td class="font-medium">
+            {{ problem.teacher.name }}
+            {% if problem.is_new %}<span class="badge badge-orange" style="margin-left:.35rem">Nieuw</span>{% endif %}
+          </td>
+          {% endif %}
+          <td>{{ problem.date }}</td>
+          <td>
+            {% if problem.slot %}
+              <span class="badge badge-blue">{{ problem.slot.time }}</span>
+            {% else %}
+              <span class="text-gray-400 text-sm">Niet opgegeven</span>
+            {% endif %}
+          </td>
+          <td>{{ problem.description|truncatechars:50 }}</td>
+          <td>
+            {% if problem.status == 'open' %}
+              <span class="badge badge-orange">Open</span>
+            {% else %}
+              <span class="badge badge-green">Opgelost</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if problem.replacement_teacher %}
+              <span class="badge badge-green" title="Bevestigde vervanger">✓ {{ problem.replacement_teacher.name }}</span>
+            {% elif problem.suggested_replacement %}
+              <span class="text-sm text-gray-600" title="Automatische suggestie">
+                💡 {{ problem.suggested_replacement.name }}
+              </span>
+            {% else %}
+              <span class="text-gray-400 text-sm">–</span>
+            {% endif %}
+          </td>
+          {% if is_admin %}
+          <td>
+            {% if problem.status == 'open' %}
+              <button class="btn btn-primary btn-sm"
+                onclick="openResolveModal(
+                  '{{ problem.pk }}',
+                  '{{ problem.teacher.name|escapejs }}',
+                  '{{ problem.date }}',
+                  {% if problem.slot %}'{{ problem.slot.time }}'{% else %}null{% endif %},
+                  {% if problem.suggested_replacement %}'{{ problem.suggested_replacement.pk }}','{{ problem.suggested_replacement.name|escapejs }}'{% else %}null,null{% endif %}
+                )">
+                ⚡ Verwerken
+              </button>
+            {% else %}
+              <span class="text-gray-400 text-sm">Afgehandeld</span>
+            {% endif %}
+          </td>
+          {% endif %}
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="{% if is_admin %}7{% else %}5{% endif %}" style="text-align:center;color:var(--gray-400);padding:2rem">
+            Geen afmeldingen gevonden.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Afmelding Indienen -->
+<div id="add-modal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="card-title">Afmelding Indienen</h2>
+      <button class="modal-close" onclick="document.getElementById('add-modal').style.display='none'">×</button>
+    </div>
+    <form method="post" id="absence-form">
+      {% csrf_token %}
+      <div class="modal-body space-y-4">
+        {% for field in form %}
+          {% if field.name != 'slot' %}
+          <div class="form-group">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<div class="form-error">{{ field.errors }}</div>{% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- Slot veld (dynamisch geladen of statisch voor leerkrachten) -->
+        <div class="form-group" id="slot-group">
+          <label class="form-label">Bewakingsslot (optioneel)</label>
+          <select name="slot" id="id_slot" class="form-input">
+            <option value="">— Geen specifiek slot —</option>
+            {% for slot in form.slot.field.queryset %}
+              <option value="{{ slot.pk }}">{{ slot.date }} – {{ slot.time }}</option>
+            {% endfor %}
+          </select>
+          <div class="form-help">Selecteer het slot waarvoor je je afmeldt. Het systeem zoekt dan automatisch een vervanger.</div>
+        </div>
+
+        {% if form.non_field_errors %}
+          <div class="form-error">{{ form.non_field_errors }}</div>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('add-modal').style.display='none'">Annuleren</button>
+        <button type="submit" class="btn btn-primary">Indienen</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if is_admin %}
+<!-- Modal: Afmelding Verwerken (directie) -->
+<div id="resolve-modal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="card-title">⚡ Afmelding Verwerken</h2>
+      <button class="modal-close" onclick="document.getElementById('resolve-modal').style.display='none'">×</button>
+    </div>
+    <form method="post" id="resolve-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" id="resolve-action" value="">
+      <input type="hidden" name="replacement_id" id="resolve-replacement-id" value="">
+      <div class="modal-body">
+        <p class="text-sm text-gray-600 mb-6">
+          <strong id="resolve-teacher-name"></strong> meldt zich afwezig op <strong id="resolve-date"></strong>
+          <span id="resolve-slot-info"></span>.
+        </p>
+
+        <div class="space-y-4">
+          <!-- Optie 1: automatisch -->
+          <div id="auto-option" class="resolve-option" style="border:1px solid var(--gray-200);border-radius:var(--radius);padding:1rem;cursor:pointer;"
+               onclick="selectResolveAction('auto')">
+            <div class="flex items-center gap-2 mb-1">
+              <span id="auto-radio" style="width:1rem;height:1rem;border-radius:50%;border:2px solid var(--gray-300);flex-shrink:0;"></span>
+              <strong class="text-sm">🤖 Automatische vervanger bevestigen</strong>
+            </div>
+            <p class="text-sm text-gray-600 ml-6" id="auto-label">Bezig met laden...</p>
+          </div>
+
+          <!-- Optie 2: manueel -->
+          <div class="resolve-option" style="border:1px solid var(--gray-200);border-radius:var(--radius);padding:1rem;cursor:pointer;"
+               onclick="selectResolveAction('manual')">
+            <div class="flex items-center gap-2 mb-2">
+              <span id="manual-radio" style="width:1rem;height:1rem;border-radius:50%;border:2px solid var(--gray-300);flex-shrink:0;"></span>
+              <strong class="text-sm">👤 Zelf een vervanger aanwijzen</strong>
+            </div>
+            <div id="manual-picker" style="display:none;margin-left:1.5rem;">
+              <select class="form-input" id="manual-teacher-select" onchange="document.getElementById('resolve-replacement-id').value=this.value">
+                <option value="">— Kies een leerkracht —</option>
+                {% for t in all_teachers %}
+                  <option value="{{ t.pk }}">{{ t.name }} ({{ t.work_percentage }}%)</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <!-- Optie 3: sluiten zonder vervanger -->
+          <div class="resolve-option" style="border:1px solid var(--gray-200);border-radius:var(--radius);padding:1rem;cursor:pointer;"
+               onclick="selectResolveAction('close')">
+            <div class="flex items-center gap-2">
+              <span id="close-radio" style="width:1rem;height:1rem;border-radius:50%;border:2px solid var(--gray-300);flex-shrink:0;"></span>
+              <strong class="text-sm">✓ Afsluiten zonder vervanger</strong>
+            </div>
+            <p class="text-sm text-gray-600 ml-6">Het slot blijft leeg of wordt later ingevuld.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('resolve-modal').style.display='none'">Annuleren</button>
+        <button type="submit" class="btn btn-primary" id="resolve-submit-btn" disabled>Bevestigen</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+{% if form.errors %}
+<script>document.getElementById('add-modal').style.display='flex';</script>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Dynamische slot-selectie voor directie (admin)
+const teacherField = document.getElementById('id_teacher');
+const slotSelect = document.getElementById('id_slot');
+
+if (teacherField && teacherField.tagName === 'SELECT') {
+  teacherField.addEventListener('change', function() {
+    const teacherId = this.value;
+    slotSelect.innerHTML = '<option value="">— Geen specifiek slot —</option>';
+    if (!teacherId) return;
+    fetch(`/api/teacher-slots/?teacher_id=${teacherId}`)
+      .then(r => r.json())
+      .then(data => {
+        data.slots.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.id;
+          opt.textContent = s.label;
+          slotSelect.appendChild(opt);
+        });
+      });
+  });
+}
+
+{% if is_admin %}
+// Resolve modal
+let currentResolvePk = null;
+
+function openResolveModal(pk, teacher, date, slotTime, suggestedId, suggestedName) {
+  currentResolvePk = pk;
+  document.getElementById('resolve-form').action = `/problems/${pk}/resolve/`;
+  document.getElementById('resolve-teacher-name').textContent = teacher;
+  document.getElementById('resolve-date').textContent = date;
+  document.getElementById('resolve-slot-info').textContent = slotTime ? ` (slot ${slotTime})` : '';
+  document.getElementById('resolve-action').value = '';
+  document.getElementById('resolve-replacement-id').value = '';
+  document.getElementById('resolve-submit-btn').disabled = true;
+  document.getElementById('manual-picker').style.display = 'none';
+  document.getElementById('manual-teacher-select').value = '';
+
+  // Reset radio buttons
+  ['auto', 'manual', 'close'].forEach(a => {
+    const el = document.getElementById(a + '-radio');
+    if (el) {
+      el.style.background = 'transparent';
+      el.style.borderColor = 'var(--gray-300)';
+    }
+  });
+
+  if (suggestedId && suggestedName) {
+    document.getElementById('auto-label').textContent = `Voorgestelde vervanger: ${suggestedName}`;
+    document.getElementById('resolve-replacement-id').dataset.autoId = suggestedId;
+    document.getElementById('auto-option').style.opacity = '1';
+    document.getElementById('auto-option').style.pointerEvents = 'auto';
+  } else {
+    document.getElementById('auto-label').textContent = 'Geen geschikte vervanger gevonden in het systeem.';
+    document.getElementById('auto-option').style.opacity = '0.4';
+    document.getElementById('auto-option').style.pointerEvents = 'none';
+  }
+  document.getElementById('resolve-modal').style.display = 'flex';
+}
+
+function selectResolveAction(action) {
+  document.getElementById('resolve-action').value = action;
+  document.getElementById('resolve-submit-btn').disabled = false;
+
+  ['auto', 'manual', 'close'].forEach(a => {
+    const el = document.getElementById(a + '-radio');
+    if (el) {
+      el.style.background = a === action ? 'var(--blue-600)' : 'transparent';
+      el.style.borderColor = a === action ? 'var(--blue-600)' : 'var(--gray-300)';
+    }
+  });
+
+  const picker = document.getElementById('manual-picker');
+  if (action === 'manual') {
+    picker.style.display = 'block';
+    document.getElementById('resolve-replacement-id').value = '';
+    document.getElementById('resolve-submit-btn').disabled = true; // wait for selection
+  } else {
+    picker.style.display = 'none';
+    if (action === 'auto') {
+      const autoId = document.getElementById('resolve-replacement-id').dataset.autoId;
+      document.getElementById('resolve-replacement-id').value = autoId || '';
+    }
+  }
+}
+
+document.getElementById('manual-teacher-select').addEventListener('change', function() {
+  document.getElementById('resolve-replacement-id').value = this.value;
+  document.getElementById('resolve-submit-btn').disabled = !this.value;
+});
+{% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'childguard/base.html' %}
+{% block title %}Geen toegang – Childguard{% endblock %}
+{% block content %}
+<div style="text-align:center;padding:4rem 1rem;">
+  <div style="font-size:4rem;margin-bottom:1rem;">🔒</div>
+  <h1 class="page-title" style="margin-bottom:.5rem;">Geen toegang</h1>
+  <p class="page-sub" style="margin-bottom:2rem;">Je hebt geen rechten om deze pagina te bekijken. Neem contact op met de beheerder als je denkt dat dit een fout is.</p>
+  <a href="{% url 'dashboard' %}" class="btn btn-primary">← Terug naar dashboard</a>
+</div>
+{% endblock %}
